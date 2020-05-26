@@ -1,0 +1,58 @@
+version: '3.7'
+
+services:
+  redis:
+    image: "redis:6"
+    # restart: always
+    volumes:
+      - type: bind
+        source: ${DEV_ENV_ROOT}/redis/data
+        target: /data
+    ports:
+      - 6379:6379
+    networks:
+      - backend
+
+
+  memcached:
+    image: "memcached:1.6"
+    volumes:
+      - type: bind
+        source: ${DEV_ENV_ROOT}/memcached/data
+        target: /data
+    ports:
+      - 11211:11211
+    networks:
+      - backend
+
+
+  mysql:
+    image: "mysql:5.6"
+    # restart: always
+    volumes:
+      - type: bind
+        source: ${DEV_ENV_ROOT}/mysql/data
+        target: /var/lib/mysql
+    #  - ${DEV_ENV_ROOT}/mysql/initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
+    networks:
+      - backend
+    environment:
+      MYSQL_ROOT_PASSWORD: changeme
+    #   MYSQL_DATABASE: devenv
+
+
+  adminer:
+    image: "adminer:4.7"
+    # restart: always
+    depends_on:
+      - mysql
+    ports:
+      - 38080:8080
+    networks:
+      - backend
+
+
+networks:
+  backend:
