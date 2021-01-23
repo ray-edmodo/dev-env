@@ -12,6 +12,21 @@ services:
       - 6379:6379
     networks:
       - backend
+      
+  redis-commander:
+    # https://hub.docker.com/r/rediscommander/redis-commander
+    container_name: redis-commander
+    hostname: redis-commander
+    image: rediscommander/redis-commander:latest
+    # restart: always
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "38081:8081"
+    network:
+      - backend
 
 
   memcached:
